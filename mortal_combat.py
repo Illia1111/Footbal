@@ -17,16 +17,26 @@ class GameSprite(sprite.Sprite):
         self.image_r = transform.scale(image.load('right1.png'), (size_x, size_y))
         self.image_rr = transform.scale(image.load('right.png'), (size_x, size_y))
         self.image_ll = transform.scale(image.load('left.png'), (size_x, size_y))
+        
         self.rect = self.image.get_rect()
         self.rect.x = player_x
         self.rect.y = player_y
+        self.isJump = False
+        self.jumpCount = 10
 
     
     def reset(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
-    def kick(self):
-        
+
+    def jump(self):
+        if self.isJump:
+            if self.jumpCount >= -10: 
+                self.rect.y -= (self.jumpCount * abs(self.jumpCount)) * 0.5
+                self.jumpCount -= 1
+            else:
+                self.isJump = False
+                self.jumpCount = 10  
 
 
 
@@ -42,6 +52,7 @@ class Player(GameSprite):
 
 
 
+
      
 
 class Enemy(GameSprite):
@@ -53,10 +64,15 @@ class Enemy(GameSprite):
         if keys[K_d]:
             self.image  = self.image_rr
             self.rect.x = self.rect.x+self.speed
+    def kick(self):
+        keys = key.get_pressed()
+        if keys[K_g]:
+            pass
+           
 
 
- 
-       
+
+
 
 
 
@@ -92,13 +108,13 @@ while run:
             run = False
         elif e.type == KEYDOWN:
             if e.key == K_SPACE:
-                hero.fire()
+                hero.isJump = True
             
     window.blit(background, (0, 0))
 
     enemy.reset()
     enemy.move()
-
+    hero.jump()
     hero.reset()
     hero.move()
     
